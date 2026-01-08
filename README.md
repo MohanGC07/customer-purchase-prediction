@@ -8,6 +8,8 @@
 An end-to-end **Machine Learning classification project** that predicts whether a bank customer will subscribe to a **term deposit**, based on customer demographics, financial information, and marketing campaign interactions.  
 The final solution is **trained, evaluated, and deployed as a Streamlit web application** for real-time prediction.
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https:customer-purchase-prediction-mohan.streamlit.app/)
+
 ---
 
 ## 🌐 Live Application & Repository
