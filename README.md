@@ -13,12 +13,11 @@ The final solution is **trained, evaluated, and deployed as a Streamlit web appl
 ## 🌐 Live Application & Repository
 
 - 🔗 **Streamlit App:**  
-  https://your-streamlit-app-link.streamlit.app
+  https://customer-purchase-prediction-mohan.streamlit.app/
 
 - 🔗 **GitHub Repository:**  
-  https://github.com/your-username/customer-purchase-prediction
+  https://github.com/MohanGC07/customer-purchase-prediction
 
-*(Replace the links above with your actual deployed URLs)*
 
 ---
 
@@ -103,6 +102,7 @@ Categorical features were encoded using **One-Hot Encoding**, and numerical feat
 ---
 
 ## 📁 Project Structure
+---
 customer-purchase-prediction/
 │
 ├── data/
@@ -124,6 +124,8 @@ customer-purchase-prediction/
 ├── requirements.txt              # Python dependencies
 ├── README.md                     # Project documentation
 └── .gitignore                    # Git ignore configuration
+
+---
 
 ---
 
