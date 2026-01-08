@@ -142,27 +142,45 @@ customer-purchase-prediction/
 
 **Setup Instructions**
 **Clone or Download the Repository**
-- git clone <repository-url>
-- cd customer-purchase-prediction
+```
+git clone <repository-url>
+cd customer-purchase-prediction
+
+```
 
 **Create Virtual Environment**
-- python -m venv venv
+```
+python -m venv venv
+
+```
 **Activate Virtual Environment**
 **Windows:**
-- venv\Scripts\activate
+```
+venv\Scripts\activate
+
+```
 
 **macOS/Linux:**
-- source venv/bin/activate
+```
+source venv/bin/activate
+
+```
 
 **Install Required Dependencies**
-- pip install -r requirements.txt
+```
+pip install -r requirements.txt
+
+```
 **Download the Dataset**
+```
 - Visit Kaggle Dataset Page
 - Download the CSV file
 - Place it in the data/raw/ directory
 - Launch Jupyter Notebook
 - jupyter notebook
+```
 **📦 Required Libraries**
+```
 pandas>=1.5.0
 numpy>=1.23.0
 matplotlib>=3.6.0
@@ -172,30 +190,38 @@ jupyter>=1.0.0
 streamlit>=1.25.0
 plotly>=5.14.0
 imbalanced-learn>=0.10.0  # For SMOTE (bonus feature)
+
+```
 **Install all at once:**
+```
 pip install -r requirements.txt
 
+```
+
 **Run Streamlit App**
+```
 streamlit run app.py
+```
 
 ---
 
 ## 🚀 Streamlit Application
 
-The deployed app allows users to:
+**The deployed app allows users to:**
 - Enter customer details
 - Predict term deposit subscription
 - View prediction probability
 - Use the trained Random Forest model in real time
 - The app loads:
-Trained model (random_forest_model.pkl)
-Scaler (scaler.pkl)
-Training feature columns (X_train_columns.pkl)
+**Trained model** :(random_forest_model.pkl)
+**Scaler** :(scaler.pkl)
+**Training feature columns** :(X_train_columns.pkl)
 - This ensures consistent preprocessing during inference.
 
 ---
 
 ## 📈 Model Comparison (Accuracy)
+```
 Model	                                        Accuracy
 Logistic Regression	                         Evaluated
 Decision Tree	                               Evaluated
@@ -203,6 +229,8 @@ Random Forest	                               ⭐ Best
 
 - Final Model Selected: Random Forest Classifier
 - Reason: Better accuracy, robustness, and generalization performance.
+
+```
 
 ---
 
@@ -236,19 +264,25 @@ This prevents feature mismatch and scaling errors during prediction.
 ---
 
 👤 Author
+```
 
 Mohan G.C
 Computer Engineering Student
 Data Science & Machine Learning Trainee
 Deerwalk Training Center
 
+```
+
 ---
 
 📜 License
+```
 
 This project is intended for educational and academic purposes.
 Free to use for learning, projects, and portfolio demonstration with proper attribution.
 
 ⭐ If this project helped you, feel free to star the repository.
+
+```
 
 ---
