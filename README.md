@@ -102,7 +102,7 @@ Categorical features were encoded using **One-Hot Encoding**, and numerical feat
 ---
 
 ## 📁 Project Structure
----
+```
 customer-purchase-prediction/
 │
 ├── data/
@@ -125,7 +125,8 @@ customer-purchase-prediction/
 ├── README.md                     # Project documentation
 └── .gitignore                    # Git ignore configuration
 
----
+```
+
 
 ---
 
