@@ -209,7 +209,7 @@ python -m venv venv
 
 # Activate environment
 # Windows:
-venv\Scripts\activate
+venv\Scriptsctivate
 # macOS/Linux:
 source venv/bin/activate
 
