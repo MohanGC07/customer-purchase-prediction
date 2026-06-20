@@ -4,7 +4,6 @@ Batch Prediction Page - Upload CSV and score multiple customers
 
 import streamlit as st
 import pandas as pd
-import io
 import sys
 from pathlib import Path
 
@@ -26,7 +25,7 @@ uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 if uploaded_file is not None:
     try:
         df = pd.read_csv(uploaded_file)
-        st.success(f"Loaded {len(df)} records")
+        st.success(f"✅ Loaded {len(df)} records")
         
         st.subheader("Preview")
         st.dataframe(df.head(10))
@@ -36,13 +35,15 @@ if uploaded_file is not None:
         
         missing = [col for col in required_cols if col not in df.columns]
         if missing:
-            st.error(f"Missing required columns: {missing}")
+            st.error(f"❌ Missing required columns: {missing}")
         else:
             if st.button("Run Batch Prediction", type="primary"):
                 with st.spinner("Processing..."):
                     predictor = DepositPredictor()
                     
                     results = []
+                    progress_bar = st.progress(0)
+                    
                     for idx, row in df.iterrows():
                         input_dict = {
                             "age": row["age"],
@@ -62,6 +63,7 @@ if uploaded_file is not None:
                             "Probability": prob,
                             "Will_Subscribe": pred
                         })
+                        progress_bar.progress(min((idx + 1) / len(df), 1.0))
                     
                     results_df = pd.DataFrame(results)
                     output_df = pd.concat([df.reset_index(drop=True), results_df], axis=1)
@@ -74,20 +76,22 @@ if uploaded_file is not None:
                     total = len(results_df)
                     deposits = results_df["Will_Subscribe"].sum()
                     col1.metric("Total Customers", total)
-                    col2.metric("Likely Subscribers", deposits)
-                    col3.metric("Conversion Rate", f"{deposits/total:.1%}")
+                    col2.metric("Likely Subscribers", int(deposits))
+                    col3.metric("Conversion Rate", f"{deposits/total:.1%}" if total > 0 else "N/A")
                     
                     # Download button
                     csv = output_df.to_csv(index=False).encode("utf-8")
                     st.download_button(
-                        label="Download Results as CSV",
+                        label="📥 Download Results as CSV",
                         data=csv,
                         file_name="batch_predictions.csv",
                         mime="text/csv"
                     )
                     
     except Exception as e:
-        st.error(f"Error processing file: {e}")
+        st.error(f"❌ Error processing file: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 else:
     st.info("Upload a CSV file to begin batch prediction.")
     
@@ -96,7 +100,7 @@ else:
                                      "housing", "loan", "contact", "campaign", "poutcome"])
     template_csv = template.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label="Download CSV Template",
+        label="📄 Download CSV Template",
         data=template_csv,
         file_name="batch_template.csv",
         mime="text/csv"
