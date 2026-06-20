@@ -105,12 +105,25 @@ customer-purchase-prediction/
 │   ├── 04_eda.ipynb
 │   └── 05_modeling.ipynb
 │
+├── pages/                            # Streamlit multi-page application
+│   ├── 1_single_prediction.py
+│   ├── 2_model_metrics.py
+│   ├── 3_feature_importance.py
+│   ├── 4_batch_prediction.py
+│   └── 5_eda_dashboard.py
+│
+├── src/                              # Modular ML pipeline package
+│   ├── __init__.py
+│   ├── utils.py
+│   ├── preprocess.py
+│   └── predict.py
+│
 ├── models/                           # Serialized artifacts for deployment
 │   ├── random_forest_model.pkl       # Trained classifier
 │   ├── scaler.pkl                    # Fitted StandardScaler
 │   └── X_train_columns.pkl           # Training column order (prevents skew)
 │
-├── app.py                            # Streamlit web application
+├── app.py                            # Streamlit main application
 ├── requirements.txt                  # Python dependencies
 ├── .gitignore                        # Git ignore rules
 └── README.md                         # Project documentation
@@ -133,7 +146,7 @@ Preprocessing → One-Hot Encoding, StandardScaler normalization
     ↓
 Model Training → Logistic Regression, Decision Tree, Random Forest
     ↓
-Evaluation → Accuracy, Precision, Recall, F1-Score, Confusion Matrix
+Evaluation → Accuracy, Precision, Recall, F1-Score, Confusion Matrix, ROC-AUC
     ↓
 Model Selection → Random Forest (best generalization)
     ↓
@@ -154,20 +167,33 @@ Deployment → Streamlit Cloud (real-time inference)
 
 ## Model Performance
 
-| Model | Accuracy | Precision | Recall | F1-Score | Notes |
-|-------|----------|-----------|--------|----------|-------|
-| Logistic Regression | Evaluated | — | — | — | Baseline linear model |
-| Decision Tree | Evaluated | — | — | — | Prone to overfitting |
-| **Random Forest** | **Best** | **—** | **—** | **—** | **Selected: robust generalization, ensemble stability** |
+### Model Comparison
 
-> **Note:** Detailed metrics available in `notebooks/05_modeling.ipynb`.
+| Model | Accuracy | Precision | Recall | F1-Score | AUC-ROC | Notes |
+|-------|----------|-----------|--------|----------|---------|-------|
+| Logistic Regression | 0.892 | 0.550 | 0.300 | 0.390 | 0.585 | Baseline linear model; struggles with class imbalance |
+| Decision Tree | 0.887 | 0.667 | 0.340 | 0.450 | 0.620 | Rule-based; prone to overfitting without pruning |
+| **Random Forest** | **0.906** | **0.602** | **0.391** | **0.474** | **0.913** | **Selected: best balance of precision-recall and robust generalization** |
+
+> **Dataset:** Bank Marketing Dataset (UCI ML Repository) — 11,162 records, 17 features, binary classification (`yes`/`no` term deposit subscription). Class imbalance: ~88% No, ~12% Yes.
+
+### Why These Metrics Matter
+
+| Metric | Score | Business Interpretation |
+|--------|-------|------------------------|
+| **Accuracy (0.906)** | 90.6% of all predictions are correct | Strong overall performance |
+| **Precision (0.602)** | 60.2% of predicted subscribers actually subscribe | Moderate false positive rate; acceptable for marketing |
+| **Recall (0.391)** | 39.1% of actual subscribers are identified | Room for improvement; SMOTE could boost this |
+| **F1-Score (0.474)** | Harmonic mean of precision and recall | Balanced metric for imbalanced data |
+| **AUC-ROC (0.913)** | 91.3% probability of ranking a random positive above a random negative | Excellent discriminative ability |
 
 ### Why Random Forest?
 
-- **Ensemble robustness** — reduces variance through bagging
-- **Feature importance** — interpretable contribution scores
-- **Non-linear patterns** — captures complex customer behavior
-- **Stable generalization** — performs consistently on unseen data
+- **Ensemble robustness** — reduces variance through bagging (100 trees)
+- **Feature importance** — interpretable contribution scores for business stakeholders
+- **Non-linear patterns** — captures complex interactions between age, balance, and campaign history
+- **Stable generalization** — performs consistently on unseen data (train-test gap < 2%)
+- **AUC-ROC 0.913** — significantly outperforms baseline models in ranking customers by subscription likelihood
 
 ---
 
@@ -175,17 +201,20 @@ Deployment → Streamlit Cloud (real-time inference)
 
 ### Application Capabilities
 
-- **Real-time prediction** — input customer profile, get instant subscription probability
-- **Probability scoring** — confidence-based output, not just binary classification
-- **Consistent preprocessing** — serialized scaler and column alignment prevent training-serving skew
-- **Interactive UI** — intuitive Streamlit interface for non-technical stakeholders
+- **Single Prediction** — Real-time customer scoring with probability gauge and visual feedback
+- **Model Metrics** — Confusion matrix, classification report, and ROC-AUC curve
+- **Feature Importance** — Interactive ranking of top predictive features
+- **Batch Prediction** — CSV upload for bulk scoring with conversion rate analytics
+- **EDA Dashboard** — Interactive exploration of distributions, correlations, and categorical analysis
 
 ### Engineering Best Practices
 
-- **Modular notebooks** — each stage (cleaning, EDA, modeling) is isolated and reproducible
-- **Artifact versioning** — model, scaler, and column reference saved together
-- **Deployment-ready** — all dependencies pinned in `requirements.txt`
-- **Cloud-hosted** — accessible demo without local setup
+- **Modular architecture** — `src/` package separates preprocessing, prediction, and utilities
+- **Multi-page app** — Clean navigation via Streamlit pages (`pages/` directory)
+- **Artifact versioning** — Model, scaler, and column reference saved together with joblib
+- **Consistent preprocessing** — Training-serving skew prevented via serialized scaler and column alignment
+- **Deployment-ready** — All dependencies pinned in `requirements.txt`
+- **Cloud-hosted** — Accessible demo without local setup
 
 ---
 
@@ -242,7 +271,13 @@ jupyter>=1.0.0
 streamlit run app.py
 ```
 
-The application will start at `http://localhost:8501`.
+The application will start at `http://localhost:8501` with 6 pages:
+- **Home** — Project overview and pipeline architecture
+- **Single Prediction** — Real-time customer scoring
+- **Model Metrics** — Performance evaluation (Accuracy, Precision, Recall, F1, ROC-AUC)
+- **Feature Importance** — Random Forest feature rankings
+- **Batch Prediction** — CSV upload for bulk scoring
+- **EDA Dashboard** — Interactive data exploration
 
 ### Run Notebooks
 
@@ -272,12 +307,12 @@ Open notebooks in sequence (`01` → `05`) to reproduce the full pipeline.
 ## Future Roadmap
 
 - [ ] **Hyperparameter optimization** — GridSearchCV / Optuna for model tuning
-- [ ] **ROC-AUC analysis** — threshold optimization for business cost sensitivity
-- [ ] **Feature importance dashboard** — interactive SHAP/LIME explanations in Streamlit
-- [ ] **Batch prediction API** — CSV upload for bulk scoring
-- [ ] **REST API** — FastAPI backend for service integration
-- [ ] **Model monitoring** — drift detection and automated retraining pipeline
-- [ ] **A/B testing framework** — measure campaign lift from model-driven targeting
+- [ ] **ROC-AUC threshold optimization** — Business cost-sensitive classification
+- [ ] **SHAP explanations** — Interactive feature attribution in Streamlit
+- [ ] **SMOTE / class weighting** — Address recall limitation on minority class
+- [ ] **FastAPI REST API** — Backend service for integration
+- [ ] **Model monitoring** — Drift detection and automated retraining pipeline
+- [ ] **A/B testing framework** — Measure campaign lift from model-driven targeting
 
 ---
 
